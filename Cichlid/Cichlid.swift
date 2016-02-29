@@ -10,6 +10,7 @@ import AppKit
 var sharedPlugin: Cichlid?
 
 class Cichlid: NSObject {
+    
     var bundle: NSBundle
 
     class func pluginDidLoad(bundle: NSBundle) {
@@ -21,28 +22,39 @@ class Cichlid: NSObject {
 
     init(bundle: NSBundle) {
         self.bundle = bundle
-
         super.init()
-        createMenuItems()
+        
+        setupObserver()
     }
 
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        cleanObserver()
     }
-
-    func createMenuItems() {
-        var item = NSApp.mainMenu!!.itemWithTitle("Edit")
-        if item != nil {
-            var actionMenuItem = NSMenuItem(title:"Do Action", action:"doMenuAction", keyEquivalent:"")
-            actionMenuItem.target = self
-            item!.submenu!.addItem(NSMenuItem.separatorItem())
-            item!.submenu!.addItem(actionMenuItem)
-        }
-    }
-
-    func doMenuAction() {
-        let error = NSError(domain: "Hello World!", code:42, userInfo:nil)
-        NSAlert(error: error).runModal()
-    }
+    
 }
 
+extension Cichlid {
+    
+    private func setupObserver() {
+        NSNotificationCenter.defaultCenter().addObserver(self,
+            selector: "notificationListener:",
+            name: "IDEBuildOperationDidStopNotification",
+            object: nil)
+    }
+    
+    private func cleanObserver() {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
+    func notificationListener(notification: NSNotification) {
+        guard
+        let object = notification.object
+        where XcodeHelpers.isCleanBuildOperation(object),
+        let projectName = XcodeHelpers.currentProductName() else {
+            return
+        }
+    
+        Cleaner.clearDerivedDataForProject(projectName)
+    }
+    
+}

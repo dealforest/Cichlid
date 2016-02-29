@@ -7,15 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5E1529491C8374BD005A9FE0 /* XcodeHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E1529481C8374BD005A9FE0 /* XcodeHelpers.swift */; };
 		5E6F0B871C834353007FEDBA /* Cichlid.xcscheme in Resources */ = {isa = PBXBuildFile; fileRef = 5E6F0B861C834353007FEDBA /* Cichlid.xcscheme */; };
 		5E6F0B891C834353007FEDBA /* Cichlid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E6F0B881C834353007FEDBA /* Cichlid.swift */; };
+		5EAFB5B01C842FB1006D0D96 /* Cleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EAFB5AF1C842FB1006D0D96 /* Cleaner.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5E1529481C8374BD005A9FE0 /* XcodeHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XcodeHelpers.swift; sourceTree = "<group>"; };
 		5E6F0B821C834353007FEDBA /* Cichlid.xcplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Cichlid.xcplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E6F0B861C834353007FEDBA /* Cichlid.xcscheme */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = Cichlid.xcscheme; path = Cichlid.xcodeproj/xcshareddata/xcschemes/Cichlid.xcscheme; sourceTree = SOURCE_ROOT; };
 		5E6F0B881C834353007FEDBA /* Cichlid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cichlid.swift; sourceTree = "<group>"; };
 		5E6F0B8A1C834354007FEDBA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5EAFB5AF1C842FB1006D0D96 /* Cleaner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cleaner.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -39,6 +43,8 @@
 			isa = PBXGroup;
 			children = (
 				5E6F0B881C834353007FEDBA /* Cichlid.swift */,
+				5EAFB5AF1C842FB1006D0D96 /* Cleaner.swift */,
+				5E1529481C8374BD005A9FE0 /* XcodeHelpers.swift */,
 				5E6F0B8A1C834354007FEDBA /* Info.plist */,
 				5E6F0B851C834353007FEDBA /* Supporting Files */,
 			);
@@ -121,6 +127,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				5E6F0B891C834353007FEDBA /* Cichlid.swift in Sources */,
+				5EAFB5B01C842FB1006D0D96 /* Cleaner.swift in Sources */,
+				5E1529491C8374BD005A9FE0 /* XcodeHelpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -253,6 +261,7 @@
 				5E6F0B8F1C834354007FEDBA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

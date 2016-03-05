@@ -23,7 +23,7 @@ extension Cleaner {
     
     private static func derivedDataPaths(prefix: String? = nil) -> [NSURL] {
         var paths = [NSURL]()
-        if let derivedDataPath = derivedDataLocation() {
+        if let derivedDataPath = XcodeHelpers.derivedDataPath() {
             do {
                 let directories = try NSFileManager.defaultManager().contentsOfDirectoryAtPath(derivedDataPath)
                 directories.forEach { directory in
@@ -41,15 +41,6 @@ extension Cleaner {
             }
         }
         return paths
-    }
-    
-    private static func derivedDataLocation() -> String? {
-        guard let workspace = XcodeHelpers.currentWorkSpace() else {
-            return nil
-        }
-        
-        let workspaceArena = workspace.valueForKeyPath("_workspaceArena")
-        return workspaceArena?.valueForKeyPath("derivedDataLocation._pathString") as? String
     }
     
     private static func removeDirectoriesAtPaths(paths: [NSURL]) -> Bool {

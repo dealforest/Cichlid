@@ -48,5 +48,13 @@ struct XcodeHelpers {
         return purpose == 1
     }
     
+    static func derivedDataPath() -> String? {
+        guard let workspace = currentWorkSpace() else {
+            return nil
+        }
         
+        let workspaceArena = workspace.valueForKeyPath("_workspaceArena")
+        return workspaceArena?.valueForKeyPath("derivedDataLocation._pathString") as? String
+    }
+    
 }

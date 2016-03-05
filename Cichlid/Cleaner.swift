@@ -61,8 +61,14 @@ extension Cleaner {
     }
     
     private static func removeDirectoryAtPath(path: NSURL) -> Bool {
+        let fileManager = NSFileManager.defaultManager()
         do {
-            try NSFileManager.defaultManager().removeItemAtURL(path)
+            try fileManager.removeItemAtURL(path)
+            
+            // retry once
+            if fileManager.fileExistsAtPath(path.absoluteString) {
+                try fileManager.removeItemAtURL(path)
+            }
         }
         catch let error {
             print("Cichlid: Failed to remove directory: \(path) -> \(error)")

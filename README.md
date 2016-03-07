@@ -11,9 +11,9 @@ It will be automatically removed DerivedData when you run the clean
 ## Installation
 
 Download the project and build it, and then relaunch Xcode.
-Tuna will be installed in `~/Library/Application Support/Developer/Shared/Xcode/Plug-ins` automatically.
+Cichlid will be installed in `~/Library/Application Support/Developer/Shared/Xcode/Plug-ins` automatically.
 
-If you want to uninstall, remove Tuna.xcplugin in the `Plug-ins` directory.
+If you want to uninstall, remove Cichlid.xcplugin in the `Plug-ins` directory.
 
 ### Alcatraz
 
@@ -34,4 +34,4 @@ See [Releases](https://github.com/dealforest/Cichlid/releases).
 
 ### License
 
-Tuna is released under the MIT license. See LICENSE for details.
+Cichlid is released under the MIT license. See LICENSE for details.

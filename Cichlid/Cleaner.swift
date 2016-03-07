@@ -44,11 +44,7 @@ extension Cleaner {
     }
     
     private static func removeDirectoriesAtPaths(paths: [NSURL]) -> Bool {
-        var success = true
-        paths.forEach { path in
-            success = success && removeDirectoryAtPath(path)
-        }
-        return success
+        return paths.reduce(true) { $0 && removeDirectoryAtPath($1) }
     }
     
     private static func removeDirectoryAtPath(path: NSURL) -> Bool {

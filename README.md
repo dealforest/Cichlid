@@ -2,18 +2,18 @@
 
 ## Feature
 
-automatically remove the current project's DerivedData directories
+automatically delete the current project's DerivedData directories
 
 ## Usage
 
-It will be automatically removed DerivedData when you run the clean
+It will be automatically deleted DerivedData when you run the clean
 
 ## Installation
 
 Download the project and build it, and then relaunch Xcode.
 Cichlid will be installed in `~/Library/Application Support/Developer/Shared/Xcode/Plug-ins` automatically.
 
-If you want to uninstall, remove Cichlid.xcplugin in the `Plug-ins` directory.
+If you want to uninstall, delete Cichlid.xcplugin in the `Plug-ins` directory.
 
 ### Alcatraz
 

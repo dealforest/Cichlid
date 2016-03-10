@@ -1,6 +1,6 @@
 ![Cichlid](https://raw.githubusercontent.com/dealforest/Cichlid/master/images/banner.png)
 
-## Feature
+## Feature [![codebeat](https://codebeat.co/badges/67de52ee-7034-4d20-8faa-19b9ec7f3d2d)](https://codebeat.co/projects/github-com-dealforest-cichlid)
 
 automatically delete the current project's DerivedData directories
 

@@ -14,8 +14,9 @@ class Cichlid: NSObject {
     var bundle: NSBundle
 
     class func pluginDidLoad(bundle: NSBundle) {
+        if
         let appName = NSBundle.mainBundle().infoDictionary?["CFBundleName"] as? NSString
-        if appName == "Xcode" {
+        where appName == "Xcode" {
             sharedPlugin = Cichlid(bundle: bundle)
         }
     }
@@ -37,7 +38,7 @@ extension Cichlid {
     
     private func setupObserver() {
         NSNotificationCenter.defaultCenter().addObserver(self,
-            selector: "notificationListener:",
+            selector: "observedBuildOperationDidStopNotification:",
             name: "IDEBuildOperationDidStopNotification",
             object: nil)
     }
@@ -46,7 +47,7 @@ extension Cichlid {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
-    func notificationListener(notification: NSNotification) {
+    func observedBuildOperationDidStopNotification(notification: NSNotification) {
         guard
         let object = notification.object
         where XcodeHelpers.isCleanBuildOperation(object),

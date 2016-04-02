@@ -8,6 +8,8 @@ automatically delete the current project's DerivedData directories
 
 It will be automatically deleted DerivedData when you run the clean
 
+![menu](https://raw.githubusercontent.com/dealforest/Cichlid/master/images/menu.png)
+
 ## Installation
 
 Download the project and build it, and then relaunch Xcode.

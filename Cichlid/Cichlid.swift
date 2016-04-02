@@ -101,9 +101,31 @@ extension Cichlid {
     }
     
     func openDeriveDataOfCurrentProject() {
+        guard
+        let projectName = XcodeHelpers.currentProductName(),
+        let path = Cleaner.derivedDataPath(projectName) else {
+            let alert = NSAlert()
+            alert.messageText = "Cichlid"
+            alert.informativeText = "Not found the DerivedData directory"
+            alert.runModal()
+            return
+        }
+        
+        let task = NSTask()
+        task.launchPath = "/usr/bin/open"
+        task.arguments = [ path.absoluteString ]
+        task.standardOutput = NSPipe()
+        task.launch()
     }
     
     func deleteAllDeriveData() {
+        let success = Cleaner.clearAllDerivedData()
+        let alert = NSAlert()
+        alert.messageText = "Cichlid"
+        alert.informativeText = success ?
+            "successful in delete the DelivedData" :
+            "failed to delete the DerivedData"
+        alert.runModal()
     }
     
 }

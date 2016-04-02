@@ -10,11 +10,21 @@ import Foundation
 
 struct Cleaner {
     
-    static func clearDerivedDataForProject(projectName: String) {
-        let name = projectName.stringByReplacingOccurrencesOfString(" ", withString: "_")
-        let prefix = "\(name)-"
+    static func clearDerivedDataForProject(projectName: String) -> Bool {
+        let prefix = prefixForDerivedDataRule(projectName)
         let paths = derivedDataPaths(prefix)
-        removeDirectoriesAtPaths(paths)
+        return removeDirectoriesAtPaths(paths)
+    }
+    
+    static func clearAllDerivedData() -> Bool {
+        let paths = derivedDataPaths()
+        return removeDirectoriesAtPaths(paths)
+    }
+    
+    static func derivedDataPath(projectName: String) -> NSURL? {
+        let prefix = prefixForDerivedDataRule(projectName)
+        let paths = derivedDataPaths(prefix)
+        return paths.first
     }
     
 }
@@ -61,6 +71,11 @@ extension Cleaner {
             print("Cichlid: Failed to remove directory: \(path) -> \(error)")
         }
         return !NSFileManager.defaultManager().fileExistsAtPath(path.absoluteString)
+    }
+    
+    private static func prefixForDerivedDataRule(projectName: String) -> String {
+        let name = projectName.stringByReplacingOccurrencesOfString(" ", withString: "_")
+        return "\(name)-"
     }
     
 }

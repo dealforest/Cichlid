@@ -38,8 +38,12 @@ extension Cichlid {
     
     private func setupObserver() {
         NSNotificationCenter.defaultCenter().addObserver(self,
-            selector: "observedBuildOperationDidStopNotification:",
+            selector: "buildOperationDidStop:",
             name: "IDEBuildOperationDidStopNotification",
+            object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self,
+            selector: "xcodeDidFinishLaunching:",
+            name: NSApplicationDidFinishLaunchingNotification,
             object: nil)
     }
     
@@ -47,7 +51,9 @@ extension Cichlid {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
-    func observedBuildOperationDidStopNotification(notification: NSNotification) {
+    // MARK: clean
+    
+    func buildOperationDidStop(notification: NSNotification) {
         guard
         let object = notification.object
         where XcodeHelpers.isCleanBuildOperation(object),
@@ -56,6 +62,48 @@ extension Cichlid {
         }
     
         Cleaner.clearDerivedDataForProject(projectName)
+    }
+    
+    // MARK: menu
+    
+    func xcodeDidFinishLaunching(notification: NSNotification) {
+        NSNotificationCenter.defaultCenter().removeObserver(self,
+            name: NSApplicationDidFinishLaunchingNotification,
+            object: nil)
+        NSOperationQueue.mainQueue().addOperationWithBlock {
+            self.setupMenu()
+        }
+    }
+    
+    private func setupMenu() {
+        func createMenuItem(title: String, action selector: Selector, keyEquivalent charCode: String) -> NSMenuItem {
+            let item = NSMenuItem(title: title, action: selector, keyEquivalent: charCode)
+            item.keyEquivalentModifierMask = Int(
+                NSEventModifierFlags.ShiftKeyMask.rawValue |
+                NSEventModifierFlags.ControlKeyMask.rawValue)
+            item.target = self
+            return item
+        }
+        
+        let submenu = NSMenu(title: "Cichlid")
+        submenu.addItem(createMenuItem("Open the DerivedData of Current Project",
+            action: "openDeriveDataOfCurrentProject",
+            keyEquivalent: ""))
+        submenu.addItem(createMenuItem("Delete All DerivedData",
+            action: "deleteAllDeriveData",
+            keyEquivalent: ""))
+        
+        let cichlid = NSMenuItem(title: "Cichlid", action: nil, keyEquivalent: "")
+        cichlid.submenu = submenu
+        
+        let product = NSApp.mainMenu?.itemWithTitle("Product")
+        product?.submenu?.addItem(cichlid)
+    }
+    
+    func openDeriveDataOfCurrentProject() {
+    }
+    
+    func deleteAllDeriveData() {
     }
     
 }

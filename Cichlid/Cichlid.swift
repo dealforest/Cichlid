@@ -36,6 +36,8 @@ class Cichlid: NSObject {
 
 extension Cichlid {
     
+    // MARK: notification
+    
     private func setupObserver() {
         NSNotificationCenter.defaultCenter().addObserver(self,
             selector: "buildOperationDidStop:",
@@ -51,7 +53,7 @@ extension Cichlid {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
-    // MARK: clean
+    // MARK: build operation
     
     func buildOperationDidStop(notification: NSNotification) {
         guard
@@ -104,10 +106,7 @@ extension Cichlid {
         guard
         let projectName = XcodeHelpers.currentProductName(),
         let path = Cleaner.derivedDataPath(projectName) else {
-            let alert = NSAlert()
-            alert.messageText = "Cichlid"
-            alert.informativeText = "Not found the DerivedData directory"
-            alert.runModal()
+            alert("Not found the DerivedData directory")
             return
         }
         
@@ -119,13 +118,38 @@ extension Cichlid {
     }
     
     func deleteAllDeriveData() {
-        let success = Cleaner.clearAllDerivedData()
+        confirm("Are you sure you want to delete?") { success in
+            guard success else {
+                return
+            }
+            
+            let success = Cleaner.clearAllDerivedData()
+            let message = success ?
+                "successful in delete the DelivedData" :
+                "failed to delete the DerivedData"
+            self.alert(message)
+        }
+    }
+    
+    // MARK: alert
+    
+    private func alert(informativeText: String) {
         let alert = NSAlert()
         alert.messageText = "Cichlid"
-        alert.informativeText = success ?
-            "successful in delete the DelivedData" :
-            "failed to delete the DerivedData"
+        alert.informativeText = informativeText
         alert.runModal()
+    }
+    
+    private func confirm(informativeText: String, completion: (Bool -> Void)?) -> Bool {
+        let alert = NSAlert()
+        alert.alertStyle = .WarningAlertStyle
+        alert.messageText = "Cichlid"
+        alert.informativeText = informativeText
+        alert.addButtonWithTitle("OK")
+        alert.addButtonWithTitle("Cancel")
+        let result = alert.runModal() == NSAlertFirstButtonReturn
+        completion?(result)
+        return result
     }
     
 }

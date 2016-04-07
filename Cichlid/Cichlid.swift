@@ -88,6 +88,9 @@ extension Cichlid {
         }
         
         let submenu = NSMenu(title: "Cichlid")
+        submenu.addItem(createMenuItem("Delete the DerivedData of Current Project",
+            action: "deleteDeriveDataOfCurrentProject",
+            keyEquivalent: ""))
         submenu.addItem(createMenuItem("Open the DerivedData of Current Project",
             action: "openDeriveDataOfCurrentProject",
             keyEquivalent: ""))
@@ -100,6 +103,19 @@ extension Cichlid {
         
         let product = NSApp.mainMenu?.itemWithTitle("Product")
         product?.submenu?.addItem(cichlid)
+    }
+    
+    func deleteDeriveDataOfCurrentProject() {
+        guard let projectName = XcodeHelpers.currentProductName() else {
+            alert("Not found the DerivedData directory")
+            return
+        }
+        
+        let success = Cleaner.clearDerivedDataForProject(projectName)
+        let message = success ?
+            "successful in delete the DelivedData" :
+            "failed to delete the DerivedData"
+        alert(message)
     }
     
     func openDeriveDataOfCurrentProject() {

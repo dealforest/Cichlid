@@ -88,14 +88,17 @@ extension Cichlid {
         }
         
         let submenu = NSMenu(title: "Cichlid")
-        submenu.addItem(createMenuItem("Delete the DerivedData of Current Project",
-            action: "deleteDeriveDataOfCurrentProject",
-            keyEquivalent: ""))
         submenu.addItem(createMenuItem("Open the DerivedData of Current Project",
             action: "openDeriveDataOfCurrentProject",
             keyEquivalent: ""))
-        submenu.addItem(createMenuItem("Delete All DerivedData",
+        submenu.addItem(createMenuItem("Delete the DerivedData of Current Project",
+            action: "deleteDeriveDataOfCurrentProject",
+            keyEquivalent: ""))
+        submenu.addItem(createMenuItem("Delete All the DerivedData",
             action: "deleteAllDeriveData",
+            keyEquivalent: ""))
+        submenu.addItem(createMenuItem("Delete All the Archive",
+            action: "deleteAllArchiveData",
             keyEquivalent: ""))
         
         let cichlid = NSMenuItem(title: "Cichlid", action: nil, keyEquivalent: "")
@@ -143,6 +146,38 @@ extension Cichlid {
             let message = success ?
                 "successful in delete the DelivedData" :
                 "failed to delete the DerivedData"
+            self.alert(message)
+        }
+    }
+    
+    func deleteAllArchiveData() {
+        confirm("Are you sure you want to delete?") { success in
+            guard success else {
+                return
+            }
+            
+            var success = true
+            let path = "\(NSHomeDirectory())/Library/Developer/Xcode/Archives"
+            let fileManager = NSFileManager.defaultManager()
+            do {
+                let directories = try fileManager.contentsOfDirectoryAtPath(path)
+                try directories.forEach { directory in
+                    let URL = NSURL(fileURLWithPath: path).URLByAppendingPathComponent(directory)
+                    try fileManager.removeItemAtURL(URL)
+                    // retry once
+                    if fileManager.fileExistsAtPath(URL.absoluteString) {
+                        try fileManager.removeItemAtURL(URL)
+                    }
+                    success = success && !fileManager.fileExistsAtPath(URL.absoluteString)
+                }
+            }
+            catch let error {
+                success = false
+                print("Cichlid: Failed to remove directory: \(path) -> \(error)")
+            }
+            let message = success ?
+                "successful in delete the ArchiveData" :
+                "failed to delete the ArchiveData"
             self.alert(message)
         }
     }

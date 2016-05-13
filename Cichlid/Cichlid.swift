@@ -40,11 +40,11 @@ extension Cichlid {
     
     private func setupObserver() {
         NSNotificationCenter.defaultCenter().addObserver(self,
-            selector: "buildOperationDidStop:",
+            selector: #selector(Cichlid.buildOperationDidStop(_:)),
             name: "IDEBuildOperationDidStopNotification",
             object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self,
-            selector: "xcodeDidFinishLaunching:",
+            selector: #selector(Cichlid.xcodeDidFinishLaunching(_:)),
             name: NSApplicationDidFinishLaunchingNotification,
             object: nil)
     }
@@ -89,16 +89,16 @@ extension Cichlid {
         
         let submenu = NSMenu(title: "Cichlid")
         submenu.addItem(createMenuItem("Open the DerivedData of Current Project",
-            action: "openDeriveDataOfCurrentProject",
+            action: #selector(Cichlid.openDeriveDataOfCurrentProject),
             keyEquivalent: ""))
         submenu.addItem(createMenuItem("Delete the DerivedData of Current Project",
-            action: "deleteDeriveDataOfCurrentProject",
+            action: #selector(Cichlid.deleteDeriveDataOfCurrentProject),
             keyEquivalent: ""))
         submenu.addItem(createMenuItem("Delete All the DerivedData",
-            action: "deleteAllDeriveData",
+            action: #selector(Cichlid.deleteAllDeriveData),
             keyEquivalent: ""))
         submenu.addItem(createMenuItem("Delete All the Archive",
-            action: "deleteAllArchiveData",
+            action: #selector(Cichlid.deleteAllArchiveData),
             keyEquivalent: ""))
         
         let cichlid = NSMenuItem(title: "Cichlid", action: nil, keyEquivalent: "")

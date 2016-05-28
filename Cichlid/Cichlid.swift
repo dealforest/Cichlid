@@ -59,11 +59,12 @@ extension Cichlid {
         guard
         let object = notification.object
         where XcodeHelpers.isCleanBuildOperation(object),
-        let projectName = XcodeHelpers.currentProductName() else {
+        let _ = XcodeHelpers.currentProductName() else {
             return
         }
     
-        Cleaner.clearDerivedDataForProject(projectName)
+        Cleaner.clearAllDerivedData()
+//        Cleaner.clearDerivedDataForProject(projectName)
     }
     
     // MARK: menu

@@ -11,17 +11,17 @@ var sharedPlugin: Cichlid?
 
 class Cichlid: NSObject {
     
-    var bundle: NSBundle
+    var bundle: Bundle
 
-    class func pluginDidLoad(bundle: NSBundle) {
+    class func pluginDidLoad(_ bundle: Bundle) {
         if
-        let appName = NSBundle.mainBundle().infoDictionary?["CFBundleName"] as? NSString
-        where appName == "Xcode" {
+        let appName = Bundle.main.infoDictionary?["CFBundleName"] as? NSString
+        , appName == "Xcode" {
             sharedPlugin = Cichlid(bundle: bundle)
         }
     }
 
-    init(bundle: NSBundle) {
+    init(bundle: Bundle) {
         self.bundle = bundle
         super.init()
         
@@ -38,52 +38,51 @@ extension Cichlid {
     
     // MARK: notification
     
-    private func setupObserver() {
-        NSNotificationCenter.defaultCenter().addObserver(self,
+    fileprivate func setupObserver() {
+        NotificationCenter.default.addObserver(self,
             selector: #selector(Cichlid.buildOperationDidStop(_:)),
-            name: "IDEBuildOperationDidStopNotification",
+            name: NSNotification.Name(rawValue: "IDEBuildOperationDidStopNotification"),
             object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self,
+        NotificationCenter.default.addObserver(self,
             selector: #selector(Cichlid.xcodeDidFinishLaunching(_:)),
-            name: NSApplicationDidFinishLaunchingNotification,
+            name: NSNotification.Name.NSApplicationDidFinishLaunching,
             object: nil)
     }
     
-    private func cleanObserver() {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+    fileprivate func cleanObserver() {
+        NotificationCenter.default.removeObserver(self)
     }
     
     // MARK: build operation
     
-    func buildOperationDidStop(notification: NSNotification) {
+    func buildOperationDidStop(_ notification: Notification) {
         guard
         let object = notification.object
-        where XcodeHelpers.isCleanBuildOperation(object),
+        , XcodeHelpers.isCleanBuildOperation(object as AnyObject),
         let _ = XcodeHelpers.currentProductName() else {
             return
         }
     
-        Cleaner.clearAllDerivedData()
-//        Cleaner.clearDerivedDataForProject(projectName)
+        _ = Cleaner.clearAllDerivedData()
     }
     
     // MARK: menu
     
-    func xcodeDidFinishLaunching(notification: NSNotification) {
-        NSNotificationCenter.defaultCenter().removeObserver(self,
-            name: NSApplicationDidFinishLaunchingNotification,
+    func xcodeDidFinishLaunching(_ notification: Notification) {
+        NotificationCenter.default.removeObserver(self,
+            name: NSNotification.Name.NSApplicationDidFinishLaunching,
             object: nil)
-        NSOperationQueue.mainQueue().addOperationWithBlock {
+        OperationQueue.main.addOperation {
             self.setupMenu()
         }
     }
     
-    private func setupMenu() {
-        func createMenuItem(title: String, action selector: Selector, keyEquivalent charCode: String) -> NSMenuItem {
+    fileprivate func setupMenu() {
+        func createMenuItem(_ title: String, action selector: Selector, keyEquivalent charCode: String) -> NSMenuItem {
             let item = NSMenuItem(title: title, action: selector, keyEquivalent: charCode)
-            item.keyEquivalentModifierMask = Int(
-                NSEventModifierFlags.ShiftKeyMask.rawValue |
-                NSEventModifierFlags.ControlKeyMask.rawValue)
+            item.keyEquivalentModifierMask = NSEventModifierFlags(rawValue: UInt(Int(
+                NSEventModifierFlags.shift.rawValue |
+                NSEventModifierFlags.control.rawValue)))
             item.target = self
             return item
         }
@@ -105,7 +104,7 @@ extension Cichlid {
         let cichlid = NSMenuItem(title: "Cichlid", action: nil, keyEquivalent: "")
         cichlid.submenu = submenu
         
-        let product = NSApp.mainMenu?.itemWithTitle("Product")
+        let product = NSApp.mainMenu?.item(withTitle: "Product")
         product?.submenu?.addItem(cichlid)
     }
     
@@ -130,15 +129,15 @@ extension Cichlid {
             return
         }
         
-        let task = NSTask()
+        let task = Process()
         task.launchPath = "/usr/bin/open"
         task.arguments = [ path.absoluteString ]
-        task.standardOutput = NSPipe()
+        task.standardOutput = Pipe()
         task.launch()
     }
     
     func deleteAllDeriveData() {
-        confirm("Are you sure you want to delete?") { success in
+        _ = confirm("Are you sure you want to delete?") { success in
             guard success else {
                 return
             }
@@ -152,24 +151,24 @@ extension Cichlid {
     }
     
     func deleteAllArchiveData() {
-        confirm("Are you sure you want to delete?") { success in
+        _ = confirm("Are you sure you want to delete?") { success in
             guard success else {
                 return
             }
             
             var success = true
             let path = "\(NSHomeDirectory())/Library/Developer/Xcode/Archives"
-            let fileManager = NSFileManager.defaultManager()
+            let fileManager = FileManager.default
             do {
-                let directories = try fileManager.contentsOfDirectoryAtPath(path)
+                let directories = try fileManager.contentsOfDirectory(atPath: path)
                 try directories.forEach { directory in
-                    let URL = NSURL(fileURLWithPath: path).URLByAppendingPathComponent(directory)
-                    try fileManager.removeItemAtURL(URL)
+                    let URL = Foundation.URL(fileURLWithPath: path).appendingPathComponent(directory)
+                    try fileManager.removeItem(at: URL)
                     // retry once
-                    if fileManager.fileExistsAtPath(URL.absoluteString) {
-                        try fileManager.removeItemAtURL(URL)
+                    if fileManager.fileExists(atPath: URL.absoluteString) {
+                        try fileManager.removeItem(at: URL)
                     }
-                    success = success && !fileManager.fileExistsAtPath(URL.absoluteString)
+                    success = success && !fileManager.fileExists(atPath: URL.absoluteString)
                 }
             }
             catch let error {
@@ -185,20 +184,20 @@ extension Cichlid {
     
     // MARK: alert
     
-    private func alert(informativeText: String) {
+    fileprivate func alert(_ informativeText: String) {
         let alert = NSAlert()
         alert.messageText = "Cichlid"
         alert.informativeText = informativeText
         alert.runModal()
     }
     
-    private func confirm(informativeText: String, completion: (Bool -> Void)?) -> Bool {
+    fileprivate func confirm(_ informativeText: String, completion: ((Bool) -> Void)?) -> Bool {
         let alert = NSAlert()
-        alert.alertStyle = .WarningAlertStyle
+        alert.alertStyle = .warning
         alert.messageText = "Cichlid"
         alert.informativeText = informativeText
-        alert.addButtonWithTitle("OK")
-        alert.addButtonWithTitle("Cancel")
+        alert.addButton(withTitle: "OK")
+        alert.addButton(withTitle: "Cancel")
         let result = alert.runModal() == NSAlertFirstButtonReturn
         completion?(result)
         return result

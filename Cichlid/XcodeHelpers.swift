@@ -15,15 +15,15 @@ struct XcodeHelpers {
     static func currentWorkSpace() -> AnyObject? {
         guard
         let anyClass = NSClassFromString("IDEWorkspaceWindowController") as? NSObject.Type,
-        let windowControllers = anyClass.valueForKey("workspaceWindowControllers") as? [NSObject] else {
+        let windowControllers = anyClass.value(forKey: "workspaceWindowControllers") as? [NSObject] else {
             return nil
         }
         
         for controller in windowControllers {
             if
-            let isKeyWindow = controller.valueForKeyPath("window.isKeyWindow") as? Bool where isKeyWindow,
-            let workspace = controller.valueForKey("_workspace") {
-                return workspace
+            let isKeyWindow = controller.value(forKeyPath: "window.isKeyWindow") as? Bool , isKeyWindow,
+            let workspace = controller.value(forKey: "_workspace") {
+                return workspace as AnyObject?
             }
         }
         return nil
@@ -34,14 +34,14 @@ struct XcodeHelpers {
             return nil
         }
         
-        return workspace.valueForKey("name") as? String
+        return workspace.value(forKey: "name") as? String
     }
     
-    static func isCleanBuildOperation(object: AnyObject) -> Bool {
+    static func isCleanBuildOperation(_ object: AnyObject) -> Bool {
         guard
         let targetClass = NSClassFromString("IDEBuildOperation")
-        where object.isKindOfClass(targetClass),
-        let purpose = object.valueForKey("purpose") as? Int else {
+        , object.isKind(of: targetClass),
+        let purpose = object.value(forKey: "purpose") as? Int else {
             return false
         }
         
@@ -53,8 +53,8 @@ struct XcodeHelpers {
             return nil
         }
         
-        let workspaceArena = workspace.valueForKeyPath("_workspaceArena")
-        return workspaceArena?.valueForKeyPath("derivedDataLocation._pathString") as? String
+        let workspaceArena = workspace.value(forKeyPath: "_workspaceArena")
+        return (workspaceArena as AnyObject).value(forKeyPath: "derivedDataLocation._pathString") as? String
     }
     
 }

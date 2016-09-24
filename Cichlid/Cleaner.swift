@@ -10,7 +10,7 @@ import Foundation
 
 struct Cleaner {
     
-    static func clearDerivedDataForProject(projectName: String) -> Bool {
+    static func clearDerivedDataForProject(_ projectName: String) -> Bool {
         let prefix = prefixForDerivedDataRule(projectName)
         let paths = derivedDataPaths(prefix)
         return removeDirectoriesAtPaths(paths)
@@ -21,7 +21,7 @@ struct Cleaner {
         return removeDirectoriesAtPaths(paths)
     }
     
-    static func derivedDataPath(projectName: String) -> NSURL? {
+    static func derivedDataPath(_ projectName: String) -> URL? {
         let prefix = prefixForDerivedDataRule(projectName)
         let paths = derivedDataPaths(prefix)
         return paths.first
@@ -31,14 +31,14 @@ struct Cleaner {
 
 extension Cleaner {
     
-    private static func derivedDataPaths(prefix: String? = nil) -> [NSURL] {
-        var paths = [NSURL]()
+    fileprivate static func derivedDataPaths(_ prefix: String? = nil) -> [URL] {
+        var paths = [URL]()
         if let derivedDataPath = XcodeHelpers.derivedDataPath() {
             do {
-                let directories = try NSFileManager.defaultManager().contentsOfDirectoryAtPath(derivedDataPath)
+                let directories = try FileManager.default.contentsOfDirectory(atPath: derivedDataPath)
                 directories.forEach { directory in
-                    let path = NSURL(fileURLWithPath: derivedDataPath).URLByAppendingPathComponent(directory)
-                    if let prefix = prefix where directory.hasPrefix(prefix) {
+                    let path = URL(fileURLWithPath: derivedDataPath).appendingPathComponent(directory)
+                    if let prefix = prefix , directory.hasPrefix(prefix) {
                         paths.append(path)
                     }
                     else if prefix == nil {
@@ -53,28 +53,28 @@ extension Cleaner {
         return paths
     }
     
-    private static func removeDirectoriesAtPaths(paths: [NSURL]) -> Bool {
+    fileprivate static func removeDirectoriesAtPaths(_ paths: [URL]) -> Bool {
         return paths.reduce(true) { $0 && removeDirectoryAtPath($1) }
     }
     
-    private static func removeDirectoryAtPath(path: NSURL) -> Bool {
-        let fileManager = NSFileManager.defaultManager()
+    fileprivate static func removeDirectoryAtPath(_ path: URL) -> Bool {
+        let fileManager = FileManager.default
         do {
-            try fileManager.removeItemAtURL(path)
+            try fileManager.removeItem(at: path)
             
             // retry once
-            if fileManager.fileExistsAtPath(path.absoluteString) {
-                try fileManager.removeItemAtURL(path)
+            if fileManager.fileExists(atPath: path.absoluteString) {
+                try fileManager.removeItem(at: path)
             }
         }
         catch let error {
             print("Cichlid: Failed to remove directory: \(path) -> \(error)")
         }
-        return !NSFileManager.defaultManager().fileExistsAtPath(path.absoluteString)
+        return !FileManager.default.fileExists(atPath: path.absoluteString)
     }
     
-    private static func prefixForDerivedDataRule(projectName: String) -> String {
-        let name = projectName.stringByReplacingOccurrencesOfString(" ", withString: "_")
+    fileprivate static func prefixForDerivedDataRule(_ projectName: String) -> String {
+        let name = projectName.replacingOccurrences(of: " ", with: "_")
         return "\(name)-"
     }
     
